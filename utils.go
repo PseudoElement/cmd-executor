@@ -8,3 +8,21 @@ func assert(ok bool, panicMsg string) {
 		panic(msg)
 	}
 }
+
+func logGreen(msg string) {
+	green := "\033[32m"
+	reset := "\x1b[0m"
+	fmt.Printf("%s%s%s\n", green, msg, reset)
+}
+
+func logRed(msg string) {
+	red := "\033[31m"
+	reset := "\x1b[0m"
+	fmt.Printf("%s%s%s\n", red, msg, reset)
+}
+
+func logBlue(msg string) {
+	blue := "\033[34m"
+	reset := "\x1b[0m"
+	fmt.Printf("%s%s%s\n", blue, msg, reset)
+}
