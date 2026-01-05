@@ -30,20 +30,17 @@ func loadExeFiles() {
 }
 
 func main() {
+	pathToApp := loadPath()
 	loadExeFiles()
-
-	logGreen("gret")
-	logRed("red")
-	logBlue("bluer")
 
 	command := askCommand()
 	args := askArguments(command)
 
-	execute(loadPath(), command, args...)
+	execute(pathToApp, command, args...)
 }
 
 func askCommand() string {
-	logBlue("Input command name:")
+	logBlue("Input command name(npm_i, npm_b, yarn, git_pull, git_commit, git_stash_push):")
 
 	var command string
 	fmt.Scanf("%s", &command)

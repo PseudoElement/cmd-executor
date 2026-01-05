@@ -6,9 +6,10 @@ type Argument struct {
 }
 
 var argsConfig = map[string][]Argument{
-	"npm_i":      {Argument{Name: "package name", Required: false}},
-	"npm_b":      {},
-	"yarn":       {Argument{Name: "package name", Required: false}},
-	"git_pull":   {},
-	"git_commit": {Argument{Name: "commit message", Required: true}},
+	"npm_i":          {Argument{Name: "package name", Required: false}},
+	"npm_b":          {},
+	"yarn":           {Argument{Name: "package name", Required: false}},
+	"git_pull":       {},
+	"git_commit":     {Argument{Name: "commit message", Required: true}},
+	"git_stash_push": {Argument{Name: "stash message", Required: false}},
 }

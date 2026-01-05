@@ -44,35 +44,29 @@ func tryCommand(pathToApp string, commandCall func() ([]byte, error)) error {
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 243") {
 			logBlue("Invalid permission.")
+
+			removePermissionTrackGlobally()
 			givePermission(pathToApp)
 
 			out, err = commandCall()
 			if err == nil {
-				logRed("Execution succeded.")
+				logRed("Execution succeeded.")
 				log.Println("Output: ", string(out))
 			}
 
 			return err
 		} else {
 			logRed("Execution failed.")
+
 			log.Println("Output: ", string(out))
 			log.Fatal(err)
 		}
 	}
 
+	logGreen("Execution succeeded.")
+	log.Println("Output: ", string(out))
+
 	return nil
-}
-
-func givePermission(path string) {
-	cmd := exec.Command("chmod", "-R", "777", path)
-
-	out, err := cmd.Output()
-	assert(err == nil, "chmod failed")
-
-	logGreen("Permission changed successfully.")
-	if len(out) > 0 {
-		log.Println("Output: ", string(out))
-	}
 }
 
 func npmBuild(pathToApp string) ([]byte, error) {
@@ -121,13 +115,15 @@ func gitCommit(pathToApp, commitMsg string) ([]byte, error) {
 	git := executables["git"]
 
 	gitDir := "--git-dir=" + pathToApp + "/.git"
-	cmd := exec.Command(git, gitDir, "add", pathToApp)
+	gitWorkTree := "--work-tree=" + pathToApp
+	cmd := exec.Command(git, gitDir, gitWorkTree, "add", pathToApp)
+
 	out, err := cmd.Output()
 	if err != nil {
 		return out, err
 	}
 
-	// cmd = exec.Command(git, gitDir, "commit", "-m", commitMsg)
+	cmd = exec.Command(git, gitDir, "commit", "-m", commitMsg)
 
 	return cmd.Output()
 }
@@ -135,8 +131,9 @@ func gitCommit(pathToApp, commitMsg string) ([]byte, error) {
 func gitStashPush(pathToApp string, stashMsg string) ([]byte, error) {
 	git := executables["git"]
 
-	gitDir := "--git-dir=" + pathToApp + "/.git"
-	cmd := exec.Command(git, gitDir, "stash", "push", "-u", "-m", stashMsg)
+	// gitDir := "--git-dir=" + pathToApp + "/.git"
+	gitWorkTree := "--work-tree=" + pathToApp
+	cmd := exec.Command(git, gitWorkTree, "stash", "push", "-u", "-m", stashMsg)
 
 	return cmd.Output()
 }
