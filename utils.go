@@ -2,9 +2,14 @@ package main
 
 import "fmt"
 
-func assert(ok bool, panicMsg string) {
+func assert(ok bool, panicMsg string, err error) {
 	if !ok {
-		msg := fmt.Errorf("assert panicked: %s", panicMsg)
+		var msg error
+		if err != nil {
+			msg = fmt.Errorf("assert panicked: %s. Original error: %w.", panicMsg, err)
+		} else {
+			msg = fmt.Errorf("assert panicked: %s.", panicMsg)
+		}
 		panic(msg)
 	}
 }

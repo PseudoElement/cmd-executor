@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
-	"strings"
 )
 
-func execute(pathToApp, command string, args ...string) error {
+func execute(pathToApp, command string, args []string) error {
 	switch command {
 	case "npm_i":
 		return tryCommand(pathToApp, func() ([]byte, error) {
@@ -42,25 +41,27 @@ func execute(pathToApp, command string, args ...string) error {
 func tryCommand(pathToApp string, commandCall func() ([]byte, error)) error {
 	out, err := commandCall()
 	if err != nil {
-		if strings.Contains(err.Error(), "exit status 243") {
-			logBlue("Invalid permission.")
+		logRed("[tryCommand_err] err: " + err.Error())
+		logRed("[tryCommand_out] out: " + string(out))
 
-			removePermissionTrackGlobally()
-			givePermission(pathToApp)
+		logBlue("Check invalid permission.")
 
-			out, err = commandCall()
-			if err == nil {
-				logRed("Execution succeeded.")
-				log.Println("Output: ", string(out))
-			}
+		removePermissionTrackGlobally()
+		givePermission(pathToApp)
 
-			return err
-		} else {
-			logRed("Execution failed.")
-
+		out, err = commandCall()
+		if err == nil {
+			logRed("Execution succeeded.")
 			log.Println("Output: ", string(out))
-			log.Fatal(err)
+
+			return nil
 		}
+
+		logRed("Execution failed.")
+		log.Println("Output: ", string(out))
+		log.Fatal(err)
+
+		return err
 	}
 
 	logGreen("Execution succeeded.")
@@ -84,7 +85,8 @@ func npmInstall(pathToApp, packageName string) ([]byte, error) {
 		return cmd.Output()
 	}
 
-	cmd := exec.Command(npm, "install", packageName, "--prefix", pathToApp, "--legacy-peer-deps")
+	cmd := exec.Command("sudo", npm, "install", packageName, "--prefix", pathToApp, "--legacy-peer-deps")
+	log.Printf("%s %s %s %s %s %s %s\n", "sudo", npm, "install", packageName+"@latest", "--prefix", pathToApp, "--legacy-peer-deps")
 
 	return cmd.Output()
 }
@@ -106,7 +108,8 @@ func gitPull(pathToApp string) ([]byte, error) {
 	git := executables["git"]
 
 	gitDir := "--git-dir=" + pathToApp + "/.git"
-	cmd := exec.Command(git, gitDir, "pull")
+	gitWorkTree := "--work-tree=" + pathToApp
+	cmd := exec.Command(git, gitDir, gitWorkTree, "pull")
 
 	return cmd.Output()
 }
@@ -131,9 +134,9 @@ func gitCommit(pathToApp, commitMsg string) ([]byte, error) {
 func gitStashPush(pathToApp string, stashMsg string) ([]byte, error) {
 	git := executables["git"]
 
-	// gitDir := "--git-dir=" + pathToApp + "/.git"
+	gitDir := "--git-dir=" + pathToApp + "/.git"
 	gitWorkTree := "--work-tree=" + pathToApp
-	cmd := exec.Command(git, gitWorkTree, "stash", "push", "-u", "-m", stashMsg)
+	cmd := exec.Command(git, gitDir, gitWorkTree, "stash", "push", "-u", "-m", stashMsg)
 
 	return cmd.Output()
 }

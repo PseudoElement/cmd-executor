@@ -20,10 +20,10 @@ func removePermissionTrackGlobally() {
 }
 
 func givePermission(path string) {
-	cmd := exec.Command("chmod", "-R", "777", path)
+	cmd := exec.Command("sudo", "chmod", "-R", "777", path)
 
 	out, err := cmd.Output()
-	assert(err == nil, "chmod failed")
+	assert(err == nil, "chmod failed", err)
 
 	logGreen("Permission changed successfully.")
 	if len(out) > 0 {

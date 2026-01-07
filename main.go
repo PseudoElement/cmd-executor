@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -12,10 +13,10 @@ var executables = make(map[string]string, 3)
 
 func loadPath() string {
 	err := godotenv.Load()
-	assert(err == nil, "godotenv loading failed")
+	assert(err == nil, "godotenv loading failed", err)
 
 	pathToNpmProject := os.Getenv("PATH_TO_NPM_PROJECT")
-	assert(pathToNpmProject != "", "empty PATH_TO_NPM_PROJECT")
+	assert(pathToNpmProject != "", "empty PATH_TO_NPM_PROJECT", nil)
 
 	return pathToNpmProject
 }
@@ -24,7 +25,7 @@ func loadExeFiles() {
 	exeNames := []string{"npm", "yarn", "git"}
 	for _, exeName := range exeNames {
 		exeFile, err := exec.LookPath(exeName)
-		assert(err == nil, fmt.Sprintf("%s not installed", exeName))
+		assert(err == nil, fmt.Sprintf("%s not installed", exeName), err)
 		executables[exeName] = exeFile
 	}
 }
@@ -36,7 +37,7 @@ func main() {
 	command := askCommand()
 	args := askArguments(command)
 
-	execute(pathToApp, command, args...)
+	execute(pathToApp, command, args)
 }
 
 func askCommand() string {
@@ -71,13 +72,14 @@ func askArguments(command string) []string {
 func _askArgument(arg Argument) string {
 	logBlue("Input " + arg.Name + ":")
 
-	var input string
-	fmt.Scanf("%s", &input)
+	in := bufio.NewReader(os.Stdin)
+	line, err := in.ReadString('\n')
+	assert(err == nil, "[_askArgument_in.ReadString] failed: ", err)
 
-	if input == "" && arg.Required {
+	if line == "" && arg.Required {
 		logRed("Argument required.")
 		return _askArgument(arg)
 	}
 
-	return input
+	return line
 }
