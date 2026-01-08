@@ -12,14 +12,14 @@ import (
 var executables = make(map[string]string, 3)
 
 func loadPath() string {
-	err := godotenv.Load()
-	assert(err == nil, "godotenv loading failed", err)
-
 	pathToNpmProject := checkPathToNpmProject()
 	if pathToNpmProject != "" {
 		logBlue("PATH_TO_NPM_PROJECT is " + pathToNpmProject)
 		return pathToNpmProject
 	} else {
+		err := godotenv.Load()
+		assert(err == nil, "godotenv loading failed and --path argument not provided", err)
+
 		pathToNpmProject := os.Getenv("PATH_TO_NPM_PROJECT")
 		assert(pathToNpmProject != "", "empty PATH_TO_NPM_PROJECT", nil)
 		logBlue("PATH_TO_NPM_PROJECT is " + pathToNpmProject)
