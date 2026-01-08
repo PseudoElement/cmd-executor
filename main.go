@@ -4,31 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
-
-	"github.com/joho/godotenv"
+	"regexp"
 )
-
-var executables = make(map[string]string, 3)
-
-func loadPath() string {
-	err := godotenv.Load()
-	assert(err == nil, "godotenv loading failed", err)
-
-	pathToNpmProject := os.Getenv("PATH_TO_NPM_PROJECT")
-	assert(pathToNpmProject != "", "empty PATH_TO_NPM_PROJECT", nil)
-
-	return pathToNpmProject
-}
-
-func loadExeFiles() {
-	exeNames := []string{"npm", "yarn", "git"}
-	for _, exeName := range exeNames {
-		exeFile, err := exec.LookPath(exeName)
-		assert(err == nil, fmt.Sprintf("%s not installed", exeName), err)
-		executables[exeName] = exeFile
-	}
-}
 
 func main() {
 	pathToApp := loadPath()
@@ -37,11 +14,13 @@ func main() {
 	command := askCommand()
 	args := askArguments(command)
 
+	logBlue(fmt.Sprintf("arguments: %v\n", args))
+
 	execute(pathToApp, command, args)
 }
 
 func askCommand() string {
-	logBlue("Input command name(npm_i, npm_b, yarn, git_pull, git_commit, git_stash_push):")
+	logBlue("Input command name(npm_i, npm_b, yarn_add, git_pull, git_commit, git_stash_push):")
 
 	var command string
 	fmt.Scanf("%s", &command)
@@ -76,10 +55,13 @@ func _askArgument(arg Argument) string {
 	line, err := in.ReadString('\n')
 	assert(err == nil, "[_askArgument_in.ReadString] failed: ", err)
 
-	if line == "" && arg.Required {
+	re := regexp.MustCompile("\n")
+	replaced := re.ReplaceAllString(line, "")
+
+	if replaced == "" && arg.Required {
 		logRed("Argument required.")
 		return _askArgument(arg)
 	}
 
-	return line
+	return replaced
 }
