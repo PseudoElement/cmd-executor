@@ -11,8 +11,18 @@ On MacOS it happens often that **VSCode** editor loses permission because it's r
 5. **npm build**
 6. **git commit -m "message"**
 7. **git pull**
+7. **git push**
 8. **git stash push**
 9. **git stash push -m "message"**
+
+### Syntax:
+1. *npm_i* - npm install / npm install package
+2. *npm_b* - npm build
+3. *yarn_add* - yarn / yarn add package
+4. *git_commit* - git commit
+5. *git_pull* - git pull
+5. *git_push* - git push
+6. *git_stash_push* - git stash push -u
 
 ### Supported OS for this program:
 MacOS, Ubuntu.

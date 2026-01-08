@@ -20,7 +20,7 @@ func main() {
 }
 
 func askCommand() string {
-	logBlue("Input command name(npm_i, npm_b, yarn_add, git_pull, git_commit, git_stash_push):")
+	logBlue("Input command name(npm_i, npm_b, yarn_add, git_pull, git_push, git_commit, git_stash_push):")
 
 	var command string
 	fmt.Scanf("%s", &command)

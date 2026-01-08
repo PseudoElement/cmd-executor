@@ -24,6 +24,10 @@ func execute(pathToApp, command string, args []string) error {
 		return tryCommand(pathToApp, func() ([]byte, error) {
 			return gitPull(pathToApp)
 		})
+	case "git_push":
+		return tryCommand(pathToApp, func() ([]byte, error) {
+			return gitPush(pathToApp)
+		})
 	case "git_commit":
 		return tryCommand(pathToApp, func() ([]byte, error) {
 			return gitCommit(pathToApp, args[0])
@@ -115,6 +119,17 @@ func gitPull(pathToApp string) ([]byte, error) {
 	gitDir := "--git-dir=" + pathToApp + "/.git"
 	gitWorkTree := "--work-tree=" + pathToApp
 	cmd := exec.Command(git, gitDir, gitWorkTree, "pull")
+	logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
+
+	return cmd.Output()
+}
+
+func gitPush(pathToApp string) ([]byte, error) {
+	git := executables["git"]
+
+	gitDir := "--git-dir=" + pathToApp + "/.git"
+	gitWorkTree := "--work-tree=" + pathToApp
+	cmd := exec.Command(git, gitDir, gitWorkTree, "push", "-u", "origin")
 	logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
 
 	return cmd.Output()
