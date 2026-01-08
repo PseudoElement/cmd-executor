@@ -129,7 +129,7 @@ func gitPush(pathToApp string) ([]byte, error) {
 
 	gitDir := "--git-dir=" + pathToApp + "/.git"
 	gitWorkTree := "--work-tree=" + pathToApp
-	cmd := exec.Command(git, gitDir, gitWorkTree, "push", "-u", "origin")
+	cmd := exec.Command(git, gitDir, gitWorkTree, "push")
 	logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
 
 	return cmd.Output()
