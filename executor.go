@@ -85,13 +85,13 @@ func npmInstall(pathToApp, packageName string) ([]byte, error) {
 	npm := executables["npm"]
 
 	if packageName == "" {
-		cmd := exec.Command(npm, "install", "--prefix", pathToApp, "--legacy-peer-deps")
+		cmd := exec.Command("sudo", npm, "install", "--prefix", pathToApp, "--legacy-peer-deps")
 		logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
 
 		return cmd.Output()
 	}
 
-	cmd := exec.Command(npm, "install", packageName, "--prefix", pathToApp, "--legacy-peer-deps")
+	cmd := exec.Command("sudo", npm, "install", packageName, "--prefix", pathToApp, "--legacy-peer-deps")
 	logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
 
 	return cmd.Output()
@@ -101,13 +101,13 @@ func yarnInstall(pathToApp, packageName string) ([]byte, error) {
 	yarn := executables["yarn"]
 
 	if packageName == "" {
-		cmd := exec.Command(yarn, "--cwd", pathToApp)
+		cmd := exec.Command("sudo", yarn, "--cwd", pathToApp)
 		logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
 
 		return cmd.Output()
 	}
 
-	cmd := exec.Command(yarn, "add", packageName, "--cwd", pathToApp)
+	cmd := exec.Command("sudo", yarn, "add", packageName, "--cwd", pathToApp)
 	logBlue(fmt.Sprintf("Executable command: %s\n", cmd.String()))
 
 	return cmd.Output()
